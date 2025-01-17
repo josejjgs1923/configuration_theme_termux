@@ -51,7 +51,7 @@ case $comando in
     USED_FILE="${USED_PATH}/zsh/used.log"
     DIRS="$ZSH/themes $ZSH/custom/themes"
     FAVLIST="${ZDOTDIR}/.zsh_favlist"
-    ZSH_CONFIGURATION_THEME_USED=$( 
+    export ZSH_CONFIGURATION_THEME_USED=$( 
       grep -Po "ZSH_THEME=(\S+)" $CONF_PATH | sed -E "s/.*=//g" 
     )
     FUNCIONES=1
@@ -81,8 +81,10 @@ case $comando in
     ayuda 1 ;;  
 esac
 
+export DIRS CONF_PATH EXTENSION USED USED_FILE FAVLIST ZSH 
+
 USED="$(bat -p $USED_FILE)"
-USED="${USED:t:r}"
+export USED="${USED:t:r}"
 
 if [[ -n $USADO ]] 
 then
@@ -135,9 +137,6 @@ case $FUNCIONES in
     INGRESAR_PREVIEW="enter:preview|
       $( declare -f preview ) ; 
         preview {} |"
-
-    export ZSH_CONFIGURATION_THEME_USED
-
      ;;
   2) 
     preview() {
@@ -172,10 +171,7 @@ case $FUNCIONES in
           $ESPERA
           termux-reload-settings |"
 
-    modo_conf="$(mktemp)"
-
-    export modo_conf
-
+    export modo_conf="$(mktemp)"
     echo 1 > "$modo_conf"
 
     mv "$CONF_PATH" "${CONF_PATH}.bck"
@@ -220,11 +216,7 @@ alternar_favoritos(){
 }
 
 
-export DIRS CONF_PATH EXTENSION USED USED_FILE FAVLIST ZSH 
-
-DEF_LIST_OPTIONS="$( declare -f list_options )"
-
-export DEF_LIST_OPTIONS
+export DEF_LIST_OPTIONS="$( declare -f list_options )"
 
 GUARDAR_FAVORITOS="${SHORTCUT_GUARDAR_FAV}:transform| 
   $( declare -f insert_favlist ) ; 
@@ -234,16 +226,13 @@ ALTERNAR_FAVORITOS="${SHORTCUT_ALTERNAR_FAV}:transform%
 $( declare -f alternar_favoritos ) ; 
 alternar_favoritos %"
 
-prompt_global="Lista Temas Global"
-prompt_favoritas="Lista Favoritos"  
-prompt_ya_esta="Ya esta en Favoritos"
-prompt_guardado="Guardado en favoritos"  
-prompt_eliminado="Eliminado"  
+export prompt_global="Lista Temas Global"
+export prompt_favoritas="Lista Favoritos"  
+export prompt_ya_esta="Ya esta en Favoritos"
+export prompt_guardado="Guardado en favoritos"  
+export prompt_eliminado="Eliminado"  
 
-modo="$(mktemp)"
-
-export prompt_favoritas prompt_global prompt_ya_esta prompt_guardado prompt_eliminado modo
-
+export modo="$(mktemp)"
 echo 1 > "$modo"
 
 list_options "$DIRS" | fzf\
