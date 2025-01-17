@@ -34,7 +34,7 @@ case $comando in
     ayuda 0 
     ;;
   usado)
-    IMPRIMIR_USADO=1
+    USADO=1
     comando="${comandos[(r)${1}*]}"
   ;;
 esac
@@ -54,8 +54,45 @@ case $comando in
     ZSH_CONFIGURATION_THEME_USED=$( 
       grep -Po "ZSH_THEME=(\S+)" $CONF_PATH | sed -E "s/.*=//g" 
     )
+    FUNCIONES=1
+     ;;
 
-    cambiar_tema(){
+  fuente) 
+    CONF_PATH="${HOME}/.termux/font.ttf"
+    USED_FILE="${USED_PATH}/fonts/used.log"
+    DIRS="$HOME/.fonts"
+    FAVLIST="${ZDOTDIR}/.font_favlist"
+    EXTENSION="ttf"
+    ESPERA="sleep 2 ;"
+    FUNCIONES=2
+    ;;
+
+  color) 
+    CONF_PATH="${HOME}/.termux/colors.properties"
+    USED_FILE="${USED_PATH}/colorscheme/used.log"
+    DIRS="$HOME/.colorscheme"
+    FAVLIST="${ZDOTDIR}/.color_favlist"
+    EXTENSION="colors"
+    ESPERA=""
+    FUNCIONES=2
+     ;;
+
+  *) 
+    ayuda 1 ;;  
+esac
+
+USED="$(bat -p $USED_FILE)"
+USED="${USED:t:r}"
+
+if [[ -n $USADO ]] 
+then
+  echo "usado: $USED" 
+  exit 0
+fi
+
+case $FUNCIONES in
+ 1) 
+    cambiar(){
 
       CHOICE="$*"
       CHOICE="${CHOICE:t}"
@@ -75,7 +112,7 @@ case $comando in
       fi
     }
 
-    theme_preview() {
+    preview() {
         source $ZSH/oh-my-zsh.sh
        
         THEME_PATH=$1".zsh-theme"
@@ -91,39 +128,18 @@ case $comando in
     }
 
     INGRESAR_CAMBIO="${SHORTCUT_SALVAR}:become@ 
-      $( declare -f cambiar_tema ) ; 
-      cambiar_tema {}; 
+      $( declare -f cambiar ) ; 
+      cambiar {}; 
       exec zsh @"
 
     INGRESAR_PREVIEW="enter:preview|
-      $( declare -f theme_preview ) ; 
-        theme_preview {} |"
+      $( declare -f preview ) ; 
+        preview {} |"
 
     export ZSH_CONFIGURATION_THEME_USED
 
      ;;
-  *) 
-    case "$comando" in
-      fuente) 
-        CONF_PATH="${HOME}/.termux/font.ttf"
-        USED_FILE="${USED_PATH}/fonts/used.log"
-        DIRS="$HOME/.fonts"
-        FAVLIST="${ZDOTDIR}/.font_favlist"
-        EXTENSION="ttf"
-        ESPERA="sleep 2 ;"
-        ;;
-      color) 
-        CONF_PATH="${HOME}/.termux/colors.properties"
-        USED_FILE="${USED_PATH}/colorscheme/used.log"
-        DIRS="$HOME/.colorscheme"
-        FAVLIST="${ZDOTDIR}/.color_favlist"
-        EXTENSION="colors"
-        ESPERA=""
-         ;;
-     *) 
-        ayuda 1 ;;  
-    esac
-
+  2) 
     preview() {
       CHOICE="$1"
       cp -fr "${CHOICE}.${EXTENSION}" "$CONF_PATH"
@@ -162,7 +178,7 @@ case $comando in
 
     echo 1 > "$modo_conf"
 
-    [[ -n ${IMPRIMIR_USADO:+1} ]] || mv "$CONF_PATH" "${CONF_PATH}.bck"
+    mv "$CONF_PATH" "${CONF_PATH}.bck"
 esac
 
 list_options() {
@@ -203,12 +219,6 @@ alternar_favoritos(){
   fi 
 }
 
-
-USED="$(bat -p $USED_FILE)"
-
-USED="${USED:t:r}"
-
-[[ -n ${IMPRIMIR_USADO:+1} ]] && echo "usado: $USED" && exit 0
 
 export DIRS CONF_PATH EXTENSION USED USED_FILE FAVLIST ZSH 
 
