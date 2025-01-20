@@ -54,7 +54,6 @@ case $comando in
     export ZSH_CONFIGURATION_THEME_USED=$( 
       grep -Po "ZSH_THEME=(\S+)" $CONF_PATH | sed -E "s/.*=//g" 
     )
-    FUNCIONES=1
      ;;
 
   fuente) 
@@ -64,7 +63,6 @@ case $comando in
     FAVLIST="${ZDOTDIR}/.font_favlist"
     EXTENSION="ttf"
     ESPERA="sleep 2 ;"
-    FUNCIONES=2
     ;;
 
   color) 
@@ -74,7 +72,6 @@ case $comando in
     FAVLIST="${ZDOTDIR}/.color_favlist"
     EXTENSION="colors"
     ESPERA=""
-    FUNCIONES=2
      ;;
 
   *) 
@@ -92,8 +89,8 @@ then
   exit 0
 fi
 
-case $FUNCIONES in
- 1) 
+case $comando in
+ zsh|tema) 
     cambiar(){
 
       CHOICE="$*"
@@ -138,7 +135,7 @@ case $FUNCIONES in
       $( declare -f preview ) ; 
         preview {} |"
      ;;
-  2) 
+  fuente|color) 
     preview() {
       CHOICE="$1"
       cp -fr "${CHOICE}.${EXTENSION}" "$CONF_PATH"
