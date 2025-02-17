@@ -40,6 +40,29 @@ case $comando in
   ;;
 esac
 
+restaursr_mantener_cambios()
+{
+  if [[ -f "$modo_conf" ]]
+  then
+    if  [[ $(bat -p "$modo_conf") == 1 ]]
+    then
+      mv "${CONF_PATH}.bck"  "$CONF_PATH"
+      termux-reload-settings
+    else
+      rm "${CONF_PATH}.bck"
+    fi
+  fi
+}
+
+limpieza()
+{
+  rm -f "$modo" 
+  rm -f "$modo_conf"
+}
+
+trap "restaursr_mantener_cambios; limpieza" EXIT
+trap "restaursr_mantener_cambios; limpieza; exit 1" ERR INT
+
 SHORTCUT_SALVAR="ctrl-a"
 SHORTCUT_GUARDAR_FAV="ctrl-g"
 SHORTCUT_ALTERNAR_FAV="ctrl-f"
@@ -309,19 +332,5 @@ list_options "$DIRS" | fzf\
   --preview-window="up,35%,hidden"\
   --border=bottom\
   --border-label="tema actual: $USED"\
-  ${ARGS_FUNCION[@]}
-
-if [[ -f "$modo_conf" ]]
-then
-  if  [[ $(bat -p "$modo_conf") == 1 ]]
-  then
-    mv "${CONF_PATH}.bck"  "$CONF_PATH"
-    termux-reload-settings
-  else
-    rm "${CONF_PATH}.bck"
-  fi
-  rm -f "$modo_conf"
-fi 
-
-rm -f "$modo" 
+  ${ARGS_FUNCION[@]} || true
 
