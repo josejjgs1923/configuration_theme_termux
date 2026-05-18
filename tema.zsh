@@ -40,7 +40,7 @@ case $comando in
   ;;
 esac
 
-restaursr_mantener_cambios()
+restaurar_mantener_cambios()
 {
   if [[ -f "$modo_conf" ]]
   then
@@ -60,8 +60,8 @@ limpieza()
   rm -f "$modo_conf"
 }
 
-trap "restaursr_mantener_cambios; limpieza" EXIT
-trap "restaursr_mantener_cambios; limpieza; exit 1" ERR INT
+trap "restaurar_mantener_cambios; limpieza" EXIT
+trap "restaurar_mantener_cambios; limpieza; exit 1" ERR INT
 
 SHORTCUT_SALVAR="ctrl-a"
 SHORTCUT_GUARDAR_FAV="ctrl-g"
