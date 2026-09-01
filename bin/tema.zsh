@@ -36,17 +36,16 @@ case $comando in
  zsh|tema) 
 
     CONF_PATH="${ZDOTDIR}/.zshrc"
-    USED_FILE="${USED_PATH}/zsh/used.log"
     DIRS="$ZSH/themes $ZSH/custom/themes"
     FAVLIST="${ZDOTDIR}/.zsh_favlist"
-    export ZSH_CONFIGURATION_THEME_USED=$( 
+    USED=$( 
       grep -Po "ZSH_THEME=(\S+)" $CONF_PATH | sed -E "s/.*=//g" 
     )
      ;;
 
   fuente) 
     CONF_PATH="${HOME}/.termux/font.ttf"
-    USED_FILE="${USED_PATH}/fonts/used.log"
+    USED_FILE="${USED_PATH}/used_font.log"
     DIRS="$HOME/.fonts"
     FAVLIST="${ZDOTDIR}/.font_favlist"
     EXTENSION="ttf"
@@ -55,7 +54,7 @@ case $comando in
 
   color) 
     CONF_PATH="${HOME}/.termux/colors.properties"
-    USED_FILE="${USED_PATH}/colorscheme/used.log"
+    USED_FILE="${USED_PATH}/used_color.log"
     DIRS="$HOME/.colorscheme"
     FAVLIST="${ZDOTDIR}/.color_favlist"
     EXTENSION="colors"
@@ -75,7 +74,7 @@ case $comando in
       echo "No se puede alcanzar el repositorio. Asegurese de estar conectado a internet"
     fi
     CONF_PATH="${HOME}/.termux/colors.properties"
-    USED_FILE="${USED_PATH}/colorscheme/used.log"
+    USED_FILE="${USED_PATH}/used_color.log"
     DIRS="$HOME/.colorscheme"
     EXTENSION="colors"
     MULTI="--multi"
@@ -87,7 +86,7 @@ esac
 
 export DIRS CONF_PATH EXTENSION USED USED_FILE FAVLIST ZSH 
 
-USED="$(bat -p $USED_FILE)"
+USED="${USED:-$(bat -p "$USED_FILE")}"
 export USED="${USED:t:r}"
 
 if [[ -n $USADO ]] 
@@ -127,11 +126,8 @@ case $comando in
       if cp -fr "$CHOICE" "$CONF_PATH"; then
         CHOICE=${CHOICE:t:r}
         echo 0 > "$modo_conf"
-        if [ ! -f ${USED_FILE} ]; then
-          echo -e "${CHOICE}" >> $USED_FILE
-        elif [ -f $USED_FILE ]; then
-          sed -i --follow-symlinks "s/${USED}/${CHOICE}/g" $USED_FILE
-        fi
+
+        echo -e "${CHOICE}" > $USED_FILE
       fi
     }
 

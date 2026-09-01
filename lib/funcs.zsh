@@ -111,19 +111,9 @@ cambiar(){
   CHOICE="$*"
   CHOICE="${CHOICE:t}"
 
-  if sed -i --follow-symlinks\
-    "s/ZSH_THEME=${ZSH_CONFIGURATION_THEME_USED}.*/ZSH_THEME=${CHOICE}/g"\
-    ${CONF_PATH}; then
-    if [ ! -f ${USED_FILE} ]; then
-
-      echo -e "${CHOICE}" >> $USED_FILE
-
-    elif [ -f $USED_FILE ]; then
-
-      sed -i --follow-symlinks "s/${USED}/${CHOICE}/g" $USED_FILE
-
-    fi
-  fi
+  sed -i --follow-symlinks\
+    "s/ZSH_THEME=${USED}.*/ZSH_THEME=${CHOICE}/g"\
+    ${CONF_PATH}
 }
 
 

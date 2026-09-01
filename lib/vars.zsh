@@ -1,6 +1,6 @@
 #!/bin/zsh
 
-USED_PATH="${HOME}/.config/mytermux"
+USED_PATH="${HOME}/.config/.termux/"
 
 SHORTCUT_SALVAR="ctrl-a"
 SHORTCUT_GUARDAR_FAV="ctrl-g"
